@@ -203,6 +203,10 @@ define token stack(16)
 
 # -- dma
 
+:DMA is opcode=0x7120 { }
+:PCM is opcode=0x7128 { }
+:DDR is opcode=0x7138 { }
+
 # -- four word operation
 
 # -- mantissa shift
