@@ -34,24 +34,83 @@ define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F ];
 #--------------------------------------------------------------------------
 # Tokens
 
+
+#--------------------------------------------------------------------------
+# Variables
+
+
+#--------------------------------------------------------------------------
+# Tables
+
+
+#--------------------------------------------------------------------------
+# Mnemonics
+
 # -- memory reference
 
-define token memref(16)
+define token memory_reference(16)
   di = (15,15)   # direct / indirect
-  group = (12,14) # instruction group
-  opcode = (11,14)  # instruction
+  op_mem = (11,14)  # instruction
   page = (10,10) # base / current page
   addr = (0,9)   # address
 ;
 
+memref: addr is addr { export *[const]:2 addr; }
+
+:LDA memref is op_mem=0 & memref { }
+:LDB memref is op_mem=1 & memref { }
+:CPA memref is op_mem=2 & memref { }
+:CPB memref is op_mem=3 & memref { }
+:ADA memref is op_mem=4 & memref { }
+:ADB memref is op_mem=5 & memref { }
+:STA memref is op_mem=6 & memref { }
+:STB memref is op_mem=7 & memref { }
+:JSM memref is op_mem=8 & memref { }
+:ISZ memref is op_mem=9 & memref { }
+:AND memref is op_mem=10 & memref { }
+:DSZ memref is op_mem=11 & memref { }
+:IOR memref is op_mem=12 & memref { }
+:JMP memref is op_mem=13 & memref { }
+
 # -- shift / rotate
 
-define token shift(16)
-  op_shift = (4,15)
+define token shift_rotate(16)
+  op1215 = (12,15)  # opcode1
+  op911 = (9,11)
+  op68 = (6,8)
+  op45 = (4,5)
   count = (0,3)
 ;
 
+shift: count is count { export *[const]:1 count; }
+
+:AAR shift is op1215=0xf & op911=0 & op68 = 4 & op45 = 0 & shift { }
+:ABR shift is op1215=0xf & op911=4 & op68 = 4 & op45 = 0 & shift { }
+:SAR shift is op1215=0xf & op911=0 & op68 = 5 & op45 = 0 & shift { }
+:SBR shift is op1215=0xf & op911=4 & op68 = 5 & op45 = 0 & shift { }
+:SAL shift is op1215=0xf & op911=0 & op68 = 6 & op45 = 0 & shift { }
+:SBL shift is op1215=0xf & op911=4 & op68 = 6 & op45 = 0 & shift { }
+:RAR shift is op1215=0xf & op911=0 & op68 = 7 & op45 = 0 & shift { }
+:RBR shift is op1215=0xf & op911=4 & op68 = 7 & op45 = 0 & shift { }
+
 # -- skip
+
+#:RZA
+#:RZB
+#:SZA
+#:SZB
+#:RIA
+#:RIB
+#:SIA
+#:SIB
+#:SPS
+#:SFC
+#:SSS
+#:SSC
+#:SDS
+#:SDC
+#:SHS
+#:SHC
 
 # -- return
 
@@ -74,30 +133,3 @@ define token shift(16)
 # -- mantissa shift
 
 # -- arithmetic
-
-#--------------------------------------------------------------------------
-# Variables
-
-
-#--------------------------------------------------------------------------
-# Tables
-
-
-#--------------------------------------------------------------------------
-# Mnemonics
-
-:LDA is opcode=0 { }
-:LDB is opcode=1 { }
-:CPA is opcode=2 { }
-:CPB is opcode=3 { }
-:ADA is opcode=4 { }
-:ADB is opcode=5 { }
-:STA is opcode=6 { }
-:STB is opcode=7 { }
-:JSM is opcode=8 { }
-:ISZ is opcode=9 { }
-:AND is opcode=10 { }
-:DSZ is opcode=11 { }
-:IOR is opcode=12 { }
-:JMP is opcode=13 { }
-
