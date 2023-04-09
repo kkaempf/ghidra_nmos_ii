@@ -163,6 +163,13 @@ define token execute(16)
 
 # -- 16-bit IOC only
 
+:SDO is opcode=0x7100 { }
+:SDI is opcode=0x7108 { }
+:DBL is opcode=0x7140 { }
+:CBL is opcode=0x7148 { }
+:DBU is opcode=0x7150 { }
+:CBU is opcode=0x7158 { }
+
 # -- stack
 
 # -- interrupt
