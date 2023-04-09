@@ -130,6 +130,26 @@ skip_field: skip is skip { export *[const]:1 skip; }
 
 # -- alter
 
+define token alter(16)
+  op815 = (8,15)
+  hold = (7,7)
+  clear_set = (6,6)
+  alter_skip = (0,5)
+;
+
+:RLA alter_skip is op815=0x77 & alter_skip { }
+:RLB alter_skip is op815=0x7f & alter_skip { }
+:SLA alter_skip is op815=0x76 & alter_skip { }
+:SLB alter_skip is op815=0x7e & alter_skip { }
+:SAP alter_skip is op815=0xf4 & alter_skip { }
+:SBP alter_skip is op815=0xfc & alter_skip { }
+:SAM alter_skip is op815=0xf5 & alter_skip { }
+:SBM alter_skip is op815=0xfd & alter_skip { }
+:SOC alter_skip is op815=0xf6 & alter_skip { }
+:SOS alter_skip is op815=0xf7 & alter_skip { }
+:SEC alter_skip is op815=0xfe & alter_skip { }
+:SES alter_skip is op815=0xff & alter_skip { }
+
 # -- execute
 
 # -- 16-bit IOC only
