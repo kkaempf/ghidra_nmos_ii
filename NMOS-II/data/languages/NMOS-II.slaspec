@@ -198,6 +198,9 @@ define token stack(16)
 
 # -- interrupt
 
+:EIR is opcode=0xf110 { }
+:DIR is opcode=0xf118 { }
+
 # -- dma
 
 # -- four word operation
