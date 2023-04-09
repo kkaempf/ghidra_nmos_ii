@@ -80,6 +80,7 @@ define token shift_rotate(16)
   op68 = (6,8)
   op45 = (4,5)
   count = (0,3)
+  skip = (0,5)
 ;
 
 shift: count is count { export *[const]:1 count; }
@@ -95,22 +96,24 @@ shift: count is count { export *[const]:1 count; }
 
 # -- skip
 
-#:RZA
-#:RZB
-#:SZA
-#:SZB
-#:RIA
-#:RIB
-#:SIA
-#:SIB
-#:SPS
-#:SFC
-#:SSS
-#:SSC
-#:SDS
-#:SDC
-#:SHS
-#:SHC
+skip_field: skip is skip { export *[const]:1 skip; }
+
+:RZA skip_field is op1215=7 & op911=2 & op68=0 & skip_field { }
+:RZB skip_field is op1215=7 & op911=6 & op68=0 & skip_field { }
+:SZA skip_field is op1215=7 & op911=2 & op68=4 & skip_field { }
+:SZB skip_field is op1215=7 & op911=6 & op68=4 & skip_field { }
+:RIA skip_field is op1215=7 & op911=2 & op68=1 & skip_field { }
+:RIB skip_field is op1215=7 & op911=6 & op68=1 & skip_field { }
+:SIA skip_field is op1215=7 & op911=2 & op68=5 & skip_field { }
+:SIB skip_field is op1215=7 & op911=6 & op68=5 & skip_field { }
+:SFS skip_field is op1215=7 & op911=2 & op68=2 & skip_field { }
+:SFC skip_field is op1215=7 & op911=2 & op68=6 & skip_field { }
+:SSS skip_field is op1215=7 & op911=6 & op68=2 & skip_field { }
+:SSC skip_field is op1215=7 & op911=6 & op68=6 & skip_field { }
+:SDS skip_field is op1215=7 & op911=2 & op68=3 & skip_field { }
+:SDC skip_field is op1215=7 & op911=2 & op68=7 & skip_field { }
+:SHS skip_field is op1215=7 & op911=6 & op68=3 & skip_field { }
+:SHC skip_field is op1215=7 & op911=6 & op68=7 & skip_field { }
 
 # -- return
 
