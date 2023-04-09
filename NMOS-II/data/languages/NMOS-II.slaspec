@@ -49,6 +49,7 @@ define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F ];
 # -- memory reference
 
 define token memory_reference(16)
+  opcode = (0,15)
   di = (15,15)   # direct / indirect
   op_mem = (11,14)  # instruction
   page = (10,10) # base / current page
@@ -121,6 +122,11 @@ skip_field: skip is skip { export *[const]:1 skip; }
 :RET "pop,"^skip_field is op1215=0xf & op911=0 & op68=3 & skip_field { }
 
 # -- complement
+
+:CMA is opcode=0xf060 { }
+:CMB is opcode=0xf860 { }
+:TCA is opcode=0xf020 { }
+:TCB is opcode=0xf820 { }
 
 # -- alter
 
