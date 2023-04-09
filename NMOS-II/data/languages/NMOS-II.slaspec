@@ -226,3 +226,12 @@ define token four_word(16)
 :NRM is opcode=0x7340 { }
 
 # -- arithmetic
+
+:FXA is opcode=0x7280 { }
+:MWA is opcode=0x7200 { }
+:CMX is opcode=0x72c0 { }
+:CMY is opcode=0x7240 { }
+:FMP is opcode=0x7a00 { }
+:FDV is opcode=0x7a21 { }
+:MPY is opcode=0x7b8f { }
+:CDC is opcode=0x73c0 { }
