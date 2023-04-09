@@ -1,0 +1,103 @@
+# sleigh specification file for HP NMOS-II
+#
+# Copyright (c) 2023 by Klaus Kämpf <kkaempf@gmail.com>
+#
+# Licensed under the Apache 2.0 license
+#
+
+
+#--------------------------------------------------------------------------
+# Spaces
+
+define endian=big;
+define alignment=1;
+define space ram      type=ram_space      size=2  wordsize=1 default;
+define space register type=register_space size=2;
+
+
+#--------------------------------------------------------------------------
+# Registers
+                                   #0 2 4 6 8  a  c  e  10 12 14 16    18    1a   1c 1e 20  22 24
+define register offset=0x0 size=2 [ A B P R R4 R5 R6 R7 IV PA W  DMAPA DMAMA DMAC C  D  AR2 SE X ];
+
+define register offset=0x30 size=2  [ loc ];
+
+
+# condition flags
+define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F ];
+
+
+#--------------------------------------------------------------------------
+# Macros
+
+
+#--------------------------------------------------------------------------
+# Tokens
+
+# -- memory reference
+
+define token memref(16)
+  di = (15,15)   # direct / indirect
+  group = (12,14) # instruction group
+  opcode = (11,14)  # instruction
+  page = (10,10) # base / current page
+  addr = (0,9)   # address
+;
+
+# -- shift / rotate
+
+define token shift(16)
+  op_shift = (4,15)
+  count = (0,3)
+;
+
+# -- skip
+
+# -- return
+
+# -- complement
+
+# -- alter
+
+# -- execute
+
+# -- 16-bit IOC only
+
+# -- stack
+
+# -- interrupt
+
+# -- dma
+
+# -- four word operation
+
+# -- mantissa shift
+
+# -- arithmetic
+
+#--------------------------------------------------------------------------
+# Variables
+
+
+#--------------------------------------------------------------------------
+# Tables
+
+
+#--------------------------------------------------------------------------
+# Mnemonics
+
+:LDA is opcode=0 { }
+:LDB is opcode=1 { }
+:CPA is opcode=2 { }
+:CPB is opcode=3 { }
+:ADA is opcode=4 { }
+:ADB is opcode=5 { }
+:STA is opcode=6 { }
+:STB is opcode=7 { }
+:JSM is opcode=8 { }
+:ISZ is opcode=9 { }
+:AND is opcode=10 { }
+:DSZ is opcode=11 { }
+:IOR is opcode=12 { }
+:JMP is opcode=13 { }
+
