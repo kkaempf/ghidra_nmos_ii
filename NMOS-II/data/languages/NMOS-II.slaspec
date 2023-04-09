@@ -117,6 +117,9 @@ skip_field: skip is skip { export *[const]:1 skip; }
 
 # -- return
 
+:RET skip_field is op1215=0xf & op911=0 & op68=2 & skip_field { }
+:RET "pop,"^skip_field is op1215=0xf & op911=0 & op68=3 & skip_field { }
+
 # -- complement
 
 # -- alter
