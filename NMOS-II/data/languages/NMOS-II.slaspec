@@ -209,6 +209,14 @@ define token stack(16)
 
 # -- four word operation
 
+define token four_word(16)
+  fw_opcode = (4,15)
+  fw_words = (0,3)
+;
+
+:CLR fw_words is fw_opcode=0x738 & fw_words { }
+:XFR fw_words is fw_opcode=0x730 & fw_words { }
+
 # -- mantissa shift
 
 # -- arithmetic
