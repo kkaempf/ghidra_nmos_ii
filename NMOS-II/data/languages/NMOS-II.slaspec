@@ -219,4 +219,10 @@ define token four_word(16)
 
 # -- mantissa shift
 
+:MRX is opcode=0x7b00 { }
+:DRS is opcode=0x7b21 { }
+:MLY is opcode=0x7b61 { }
+:MRY is opcode=0x7b40 { }
+:NRM is opcode=0x7340 { }
+
 # -- arithmetic
