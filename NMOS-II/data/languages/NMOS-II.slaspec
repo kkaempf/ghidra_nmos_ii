@@ -172,6 +172,30 @@ define token execute(16)
 
 # -- stack
 
+define token stack(16)
+  stack_opcode = (8,15)
+  stack_d_i = (7,7)
+  stack_opcode2 = (3,6)
+  stack_register = (0,2)
+;
+
+:PWC_inc stack_register is stack_opcode=0x71 & stack_d_i=0 & stack_opcode2=0xc & stack_register { }
+:PWC_dec stack_register is stack_opcode=0x71 & stack_d_i=1 & stack_opcode2=0xc & stack_register { }
+:PBC_inc stack_register is stack_opcode=0x79 & stack_d_i=0 & stack_opcode2=0xc & stack_register { }
+:PBC_dec stack_register is stack_opcode=0x79 & stack_d_i=1 & stack_opcode2=0xc & stack_register { }
+:PWD_inc stack_register is stack_opcode=0x71 & stack_d_i=0 & stack_opcode2=0xd & stack_register { }
+:PWD_dec stack_register is stack_opcode=0x71 & stack_d_i=1 & stack_opcode2=0xd & stack_register { }
+:PBD_inc stack_register is stack_opcode=0x79 & stack_d_i=0 & stack_opcode2=0xd & stack_register { }
+:PBD_dec stack_register is stack_opcode=0x79 & stack_d_i=1 & stack_opcode2=0xd & stack_register { }
+:WWC_inc stack_register is stack_opcode=0x71 & stack_d_i=0 & stack_opcode2=0xe & stack_register { }
+:WWC_dec stack_register is stack_opcode=0x71 & stack_d_i=1 & stack_opcode2=0xe & stack_register { }
+:WBC_inc stack_register is stack_opcode=0x79 & stack_d_i=0 & stack_opcode2=0xe & stack_register { }
+:WBC_dec stack_register is stack_opcode=0x79 & stack_d_i=1 & stack_opcode2=0xe & stack_register { }
+:WWD_inc stack_register is stack_opcode=0x71 & stack_d_i=0 & stack_opcode2=0xf & stack_register { }
+:WWD_dec stack_register is stack_opcode=0x71 & stack_d_i=1 & stack_opcode2=0xf & stack_register { }
+:WBD_inc stack_register is stack_opcode=0x79 & stack_d_i=0 & stack_opcode2=0xf & stack_register { }
+:WBD_dec stack_register is stack_opcode=0x79 & stack_d_i=1 & stack_opcode2=0xf & stack_register { }
+
 # -- interrupt
 
 # -- dma
