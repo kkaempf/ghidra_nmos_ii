@@ -4,8 +4,8 @@
   <data_organization>
     <absolute_max_alignment value="0" />
     <machine_alignment value="2" />
-    <default_alignment value="1" />
-    <default_pointer_alignment value="4" />
+    <default_alignment value="2" />
+    <default_pointer_alignment value="2" />
     <pointer_size value="2" />
     <wchar_size value="2" />
     <short_size value="2" />
@@ -16,7 +16,7 @@
     <double_size value="4" />
     <long_double_size value="8" />
     <size_alignment_map>
-      <entry size="1" alignment="1" />
+      <entry size="1" alignment="2" />
       <entry size="2" alignment="2" />
       <entry size="4" alignment="4" />
       <entry size="8" alignment="8" />
