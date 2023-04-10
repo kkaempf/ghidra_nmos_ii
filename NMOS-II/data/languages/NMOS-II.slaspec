@@ -35,14 +35,16 @@ define token memory_reference(16)
   di = (15,15)   # direct / indirect
   op_mem = (11,14)  # instruction
   page = (10,10) # base / current page
-  addr = (0,9)   # address
+  addr = (0,9) signed  # address
 ;
 
-memref: addr is addr & di=0 { export *[const]:2 addr; }
-memref: addr^",I" is addr & di=1  { export *:2 addr; }
+memref: addr is addr & di=0 & page=0 { export *[const]:2 addr; }
+memref: addr^",I" is addr & di=1 & page=0  { export *:2 addr; }
+memref: loc is addr & di=0 & page=1 [ loc = inst_start + addr; ] { export *[const]:2 loc; }
+memref: loc^",I" is addr & di=1 & page=1 [ loc = inst_start + addr; ] { export *:2 loc; }
 
-:LDA memref is op_mem=0 & memref { }
-:LDB memref is op_mem=1 & memref { }
+:LDA memref is op_mem=0 & memref { A = memref; }
+:LDB memref is op_mem=1 & memref { B = memref; }
 :CPA memref is op_mem=2 & memref { }
 :CPB memref is op_mem=3 & memref { }
 :ADA memref is op_mem=4 & memref { }
