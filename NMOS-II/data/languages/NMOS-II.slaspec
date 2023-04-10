@@ -55,8 +55,8 @@ memref: loc^",I" is addr & di=1 & page=1 [ loc = inst_start + addr; ] { export *
 :LDB memref is op_mem=1 & memref { B = memref; }
 :CPA memref is op_mem=2 & memref { compare_and_skip_if_not_equal(A, memref); }
 :CPB memref is op_mem=3 & memref { compare_and_skip_if_not_equal(B, memref); }
-:ADA memref is op_mem=4 & memref { }
-:ADB memref is op_mem=5 & memref { }
+:ADA memref is op_mem=4 & memref { A = A + memref; }
+:ADB memref is op_mem=5 & memref { B = B + memref; }
 :STA memref is op_mem=6 & memref { }
 :STB memref is op_mem=7 & memref { }
 :JSM memref is op_mem=8 & memref { }
