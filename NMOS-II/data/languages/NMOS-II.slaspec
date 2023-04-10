@@ -28,23 +28,21 @@ define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F ];
 #--------------------------------------------------------------------------
 # Macros
 
-macro skip_if_not_zero(value, count) {
+macro goto_if_not_zero(value, target) {
   if (value == 0) goto <continue>;
-  local tmp:2 = inst_next + 2 * count;
-  goto [tmp];
+  goto [target];
 <continue>
 }
 
-macro skip_if_zero(value, count) {
+macro goto_if_zero(value, target) {
   if (value != 0) goto <continue>;
-  local tmp:2 = inst_next + 2 * count;
-  goto [tmp];
+  goto [target];
 <continue>
 }
 
-macro compare_and_skip_if_not_equal(register, memory) {
+macro compare_and_goto_if_not_equal(register, memory) {
   if (register == memory) goto <continue>;
-  local tmp:2 = inst_next + 2;
+  local tmp:2 = inst_next + 1;
   goto [tmp];
 <continue>
 }
@@ -79,23 +77,23 @@ define token memory_reference(16)
 
 memref: addr is addr & di=0 & page=0 { export *[ram]:2 addr; }
 memref: addr^",I" is addr & di=1 & page=0  { export *:2 addr; }
-memref: loc is addr & di=0 & page=1 [ loc = inst_start + addr; ] { export *[ram]:2 loc; }
-memref: loc^",I" is addr & di=1 & page=1 [ loc = inst_start + addr; ] { export *:2 loc; }
+memref: loc is addr & di=0 & page=1 [ loc = (inst_start>>1) + addr; ] { export *[ram]:2 loc; }
+memref: loc^",I" is addr & di=1 & page=1 [ loc = (inst_start>>1) + addr; ] { export *:2 loc; }
 
 :LDA memref is op_mem=0 & memref { A = memref; }
 :LDB memref is op_mem=1 & memref { B = memref; }
-:CPA memref is op_mem=2 & memref { compare_and_skip_if_not_equal(A, memref); }
-:CPB memref is op_mem=3 & memref { compare_and_skip_if_not_equal(B, memref); }
+:CPA memref is op_mem=2 & memref { compare_and_goto_if_not_equal(A, memref); }
+:CPB memref is op_mem=3 & memref { compare_and_goto_if_not_equal(B, memref); }
 :ADA memref is op_mem=4 & memref { A = A + memref; }
 :ADB memref is op_mem=5 & memref { B = B + memref; }
 :STA memref is op_mem=6 & memref { *memref = A; }
 :STB memref is op_mem=7 & memref { *memref = B; }
-:JSM memref is op_mem=8 & memref { R = R + 1; *R:2 = P; call memref; }
-:ISZ memref is op_mem=9 & memref { local tmp:2 = memref + 1; *memref:2 = tmp; skip_if_zero(tmp,1); }
+:JSM memref is op_mem=8 & memref { R = R + 1; *R:2 = P; call [memref]; }
+:ISZ memref is op_mem=9 & memref { local tmp:2 = memref + 1; *memref:2 = tmp; goto_if_zero(tmp, (inst_start>>1) + 2:2); }
 :AND memref is op_mem=10 & memref { A = A & memref; }
-:DSZ memref is op_mem=11 & memref { local tmp:2 = memref - 1; *memref:2 = tmp; skip_if_zero(tmp,1); }
+:DSZ memref is op_mem=11 & memref { local tmp:2 = memref - 1; *memref:2 = tmp; goto_if_zero(tmp, (inst_start>>2) + 2:2); }
 :IOR memref is op_mem=12 & memref { A = A | memref; }
-:JMP memref is op_mem=13 & memref { goto memref; }
+:JMP memref is op_mem=13 & memref { goto [memref]; }
 
 # -- shift / rotate
 
@@ -105,7 +103,7 @@ define token shift_rotate(16)
   op68 = (6,8)
   op45 = (4,5)
   count = (0,3)
-  skip = (0,5)
+  skip = (0,5) signed
 ;
 
 shift: count is count { export *[const]:1 count; }
@@ -122,29 +120,29 @@ shift: count is count { export *[const]:1 count; }
 # -- skip
 
 # export as 16-bit to prevent size problems
-skip_field: skip is skip { export *[const]:2 skip; }
+target: skip is skip { local tmp:2 = (inst_start>>1) + skip; export tmp; }
 
-:RZA skip_field is op1215=7 & op911=2 & op68=0 & skip_field { skip_if_not_zero(A, skip_field); }
-:RZB skip_field is op1215=7 & op911=6 & op68=0 & skip_field { skip_if_not_zero(B, skip_field); }
-:SZA skip_field is op1215=7 & op911=2 & op68=4 & skip_field { skip_if_zero(A, skip_field); }
-:SZB skip_field is op1215=7 & op911=6 & op68=4 & skip_field { skip_if_zero(B, skip_field); }
-:RIA skip_field is op1215=7 & op911=2 & op68=1 & skip_field { local tmp:2 = A; A = A + 1; skip_if_not_zero(tmp, skip_field); }
-:RIB skip_field is op1215=7 & op911=6 & op68=1 & skip_field { local tmp:2 = B; B = B + 1; skip_if_not_zero(tmp, skip_field); }
-:SIA skip_field is op1215=7 & op911=2 & op68=5 & skip_field { local tmp:2 = A; A = A + 1; skip_if_zero(tmp, skip_field); }
-:SIB skip_field is op1215=7 & op911=6 & op68=5 & skip_field { local tmp:2 = B; B = B + 1; skip_if_zero(tmp, skip_field); }
-:SFS skip_field is op1215=7 & op911=2 & op68=2 & skip_field { skip_if_not_zero(FLG_F, skip_field); }
-:SFC skip_field is op1215=7 & op911=2 & op68=6 & skip_field { skip_if_zero(FLG_F, skip_field); }
-:SSS skip_field is op1215=7 & op911=6 & op68=2 & skip_field { skip_if_not_zero(STS_F, skip_field); }
-:SSC skip_field is op1215=7 & op911=6 & op68=6 & skip_field { skip_if_zero(STS_F, skip_field); }
-:SDS skip_field is op1215=7 & op911=2 & op68=3 & skip_field { skip_if_not_zero(DC_F, skip_field); }
-:SDC skip_field is op1215=7 & op911=2 & op68=7 & skip_field { skip_if_zero(DC_F, skip_field); }
-:SHS skip_field is op1215=7 & op911=6 & op68=3 & skip_field { skip_if_not_zero(HLT_F, skip_field); }
-:SHC skip_field is op1215=7 & op911=6 & op68=7 & skip_field { skip_if_zero(HLT_F, skip_field); }
+:RZA target is op1215=7 & op911=2 & op68=0 & target { goto_if_not_zero(A, target); }
+:RZB target is op1215=7 & op911=6 & op68=0 & target { goto_if_not_zero(B, target); }
+:SZA target is op1215=7 & op911=2 & op68=4 & target { goto_if_zero(A, target); }
+:SZB target is op1215=7 & op911=6 & op68=4 & target { goto_if_zero(B, target); }
+:RIA target is op1215=7 & op911=2 & op68=1 & target { local tmp:2 = A; A = A + 1; goto_if_not_zero(tmp, target); }
+:RIB target is op1215=7 & op911=6 & op68=1 & target { local tmp:2 = B; B = B + 1; goto_if_not_zero(tmp, target); }
+:SIA target is op1215=7 & op911=2 & op68=5 & target { local tmp:2 = A; A = A + 1; goto_if_zero(tmp, target); }
+:SIB target is op1215=7 & op911=6 & op68=5 & target { local tmp:2 = B; B = B + 1; goto_if_zero(tmp, target); }
+:SFS target is op1215=7 & op911=2 & op68=2 & target { goto_if_not_zero(FLG_F, target); }
+:SFC target is op1215=7 & op911=2 & op68=6 & target { goto_if_zero(FLG_F, target); }
+:SSS target is op1215=7 & op911=6 & op68=2 & target { goto_if_not_zero(STS_F, target); }
+:SSC target is op1215=7 & op911=6 & op68=6 & target { goto_if_zero(STS_F, target); }
+:SDS target is op1215=7 & op911=2 & op68=3 & target { goto_if_not_zero(DC_F, target); }
+:SDC target is op1215=7 & op911=2 & op68=7 & target { goto_if_zero(DC_F, target); }
+:SHS target is op1215=7 & op911=6 & op68=3 & target { goto_if_not_zero(HLT_F, target); }
+:SHC target is op1215=7 & op911=6 & op68=7 & target { goto_if_zero(HLT_F, target); }
 
 # -- return
 
-:RET skip_field is op1215=0xf & op911=0 & op68=2 & skip_field { }
-:RET "pop,"^skip_field is op1215=0xf & op911=0 & op68=3 & skip_field { }
+:RET target is op1215=0xf & op911=0 & op68=2 & target { }
+:RET "pop,"^target is op1215=0xf & op911=0 & op68=3 & target { }
 
 # -- complement
 
