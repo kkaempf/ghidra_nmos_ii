@@ -9,7 +9,7 @@
             slafile="NMOS-II.sla"
             processorspec="NMOS-II.pspec"
             manualindexfile="../manuals/NMOS-II.idx"
-            id="NMOS-II:LE:16:default">
+            id="NMOS-II:BE:16:default">
     <description>HP NMOS-II</description>
     <compiler name="default" spec="NMOS-II.cspec" id="default"/>
   </language>
