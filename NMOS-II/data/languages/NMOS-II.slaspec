@@ -134,8 +134,8 @@ skip_field: skip is skip { export *[const]:2 skip; }
 :SIB skip_field is op1215=7 & op911=6 & op68=5 & skip_field { local tmp:2 = B; B = B + 1; skip_if_zero(tmp, skip_field); }
 :SFS skip_field is op1215=7 & op911=2 & op68=2 & skip_field { skip_if_not_zero(FLG_F, skip_field); }
 :SFC skip_field is op1215=7 & op911=2 & op68=6 & skip_field { skip_if_zero(FLG_F, skip_field); }
-:SSS skip_field is op1215=7 & op911=6 & op68=2 & skip_field { }
-:SSC skip_field is op1215=7 & op911=6 & op68=6 & skip_field { }
+:SSS skip_field is op1215=7 & op911=6 & op68=2 & skip_field { skip_if_not_zero(STS_F, skip_field); }
+:SSC skip_field is op1215=7 & op911=6 & op68=6 & skip_field { skip_if_zero(STS_F, skip_field); }
 :SDS skip_field is op1215=7 & op911=2 & op68=3 & skip_field { }
 :SDC skip_field is op1215=7 & op911=2 & op68=7 & skip_field { }
 :SHS skip_field is op1215=7 & op911=6 & op68=3 & skip_field { }
