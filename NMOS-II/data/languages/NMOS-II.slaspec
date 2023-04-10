@@ -121,10 +121,10 @@ skip_field: skip is skip { export *[const]:1 skip; }
 
 # -- complement
 
-:CMA is opcode=0xf060 { }
-:CMB is opcode=0xf860 { }
-:TCA is opcode=0xf020 { }
-:TCB is opcode=0xf820 { }
+:CMA is opcode=0xf060 { A = ~A; }
+:CMB is opcode=0xf860 { B = ~B; }
+:TCA is opcode=0xf020 { A = -A; }
+:TCB is opcode=0xf820 { B = -B; }
 
 # -- alter
 
