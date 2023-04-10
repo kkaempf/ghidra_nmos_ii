@@ -101,8 +101,8 @@ shift: count is count { export *[const]:1 count; }
 :ABR shift is op1215=0xf & op911=4 & op68 = 4 & op45 = 0 & shift { arith_shift_right(B, shift); }
 :SAR shift is op1215=0xf & op911=0 & op68 = 5 & op45 = 0 & shift { A = A >> shift; }
 :SBR shift is op1215=0xf & op911=4 & op68 = 5 & op45 = 0 & shift { B = B >> shift; }
-:SAL shift is op1215=0xf & op911=0 & op68 = 6 & op45 = 0 & shift { }
-:SBL shift is op1215=0xf & op911=4 & op68 = 6 & op45 = 0 & shift { }
+:SAL shift is op1215=0xf & op911=0 & op68 = 6 & op45 = 0 & shift { A = A << shift; }
+:SBL shift is op1215=0xf & op911=4 & op68 = 6 & op45 = 0 & shift { B = B << shift; }
 :RAR shift is op1215=0xf & op911=0 & op68 = 7 & op45 = 0 & shift { }
 :RBR shift is op1215=0xf & op911=4 & op68 = 7 & op45 = 0 & shift { }
 
