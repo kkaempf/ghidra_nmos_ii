@@ -25,22 +25,6 @@ define register offset=0x40 size=2  [ loc ];
 # condition flags
 define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F ];
 
-
-#--------------------------------------------------------------------------
-# Macros
-
-
-#--------------------------------------------------------------------------
-# Tokens
-
-
-#--------------------------------------------------------------------------
-# Variables
-
-#--------------------------------------------------------------------------
-# Tables
-
-
 #--------------------------------------------------------------------------
 # Mnemonics
 
@@ -54,7 +38,8 @@ define token memory_reference(16)
   addr = (0,9)   # address
 ;
 
-memref: addr is addr { export *[const]:2 addr; }
+memref: addr is addr & di=0 { export *[const]:2 addr; }
+memref: addr^",I" is addr & di=1  { export *:2 addr; }
 
 :LDA memref is op_mem=0 & memref { }
 :LDB memref is op_mem=1 & memref { }
