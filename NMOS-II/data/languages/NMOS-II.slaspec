@@ -30,9 +30,19 @@ define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F ];
 
 macro compare_and_skip_if_not_equal(register, memory) {
   if (register == memory) goto <continue>;
-  P = P + 2;
+  local tmp:2 = inst_next + 2;
+  goto [tmp];
 <continue>
 }
+
+macro store_and_skip_if_zero(value, memory) {
+  *memory:2 = value;
+  if (value != 0) goto <continue>;
+  local tmp:2 = inst_next + 2;
+  goto [tmp];
+<continue>
+}
+
 #--------------------------------------------------------------------------
 # Mnemonics
 
@@ -60,9 +70,9 @@ memref: loc^",I" is addr & di=1 & page=1 [ loc = inst_start + addr; ] { export *
 :STA memref is op_mem=6 & memref { *memref = A; }
 :STB memref is op_mem=7 & memref { *memref = B; }
 :JSM memref is op_mem=8 & memref { R = R + 1; *R:2 = P; call memref; }
-:ISZ memref is op_mem=9 & memref { }
+:ISZ memref is op_mem=9 & memref { local tmp:2 = memref + 1; store_and_skip_if_zero(tmp, memref); }
 :AND memref is op_mem=10 & memref { }
-:DSZ memref is op_mem=11 & memref { }
+:DSZ memref is op_mem=11 & memref { local tmp:2 = memref - 1; store_and_skip_if_zero(tmp, memref); }
 :IOR memref is op_mem=12 & memref { }
 :JMP memref is op_mem=13 & memref { goto memref; }
 
