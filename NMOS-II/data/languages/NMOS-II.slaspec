@@ -28,6 +28,20 @@ define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F ];
 #--------------------------------------------------------------------------
 # Macros
 
+macro skip_if_not_zero(value) {
+  if (value == 0) goto <continue>;
+  local tmp:2 = inst_next + 2;
+  goto [tmp];
+<continue>
+}
+
+macro skip_if_zero(value) {
+  if (value != 0) goto <continue>;
+  local tmp:2 = inst_next + 2;
+  goto [tmp];
+<continue>
+}
+
 macro compare_and_skip_if_not_equal(register, memory) {
   if (register == memory) goto <continue>;
   local tmp:2 = inst_next + 2;
@@ -58,12 +72,6 @@ macro rotate_right(value) {
   value = value | (lowbit << 15);
 }
 
-macro skip_if_not_zero(value) {
-  if (value == 0) goto <continue>;
-  local tmp:2 = inst_next + 2;
-  goto [tmp];
-<continue>
-}
 #--------------------------------------------------------------------------
 # Mnemonics
 
@@ -91,9 +99,9 @@ memref: loc^",I" is addr & di=1 & page=1 [ loc = inst_start + addr; ] { export *
 :STA memref is op_mem=6 & memref { *memref = A; }
 :STB memref is op_mem=7 & memref { *memref = B; }
 :JSM memref is op_mem=8 & memref { R = R + 1; *R:2 = P; call memref; }
-:ISZ memref is op_mem=9 & memref { local tmp:2 = memref + 1; store_and_skip_if_zero(tmp, memref); }
+:ISZ memref is op_mem=9 & memref { local tmp:2 = memref + 1; *memref:2 = tmp; skip_if_zero(tmp); }
 :AND memref is op_mem=10 & memref { A = A & memref; }
-:DSZ memref is op_mem=11 & memref { local tmp:2 = memref - 1; store_and_skip_if_zero(tmp, memref); }
+:DSZ memref is op_mem=11 & memref { local tmp:2 = memref - 1; *memref:2 = tmp; skip_if_zero(tmp); }
 :IOR memref is op_mem=12 & memref { A = A | memref; }
 :JMP memref is op_mem=13 & memref { goto memref; }
 
@@ -125,8 +133,8 @@ skip_field: skip is skip { export *[const]:1 skip; }
 
 :RZA skip_field is op1215=7 & op911=2 & op68=0 & skip_field { skip_if_not_zero(A); }
 :RZB skip_field is op1215=7 & op911=6 & op68=0 & skip_field { skip_if_not_zero(B); }
-:SZA skip_field is op1215=7 & op911=2 & op68=4 & skip_field { }
-:SZB skip_field is op1215=7 & op911=6 & op68=4 & skip_field { }
+:SZA skip_field is op1215=7 & op911=2 & op68=4 & skip_field { skip_if_zero(A); }
+:SZB skip_field is op1215=7 & op911=6 & op68=4 & skip_field { skip_if_zero(B); }
 :RIA skip_field is op1215=7 & op911=2 & op68=1 & skip_field { }
 :RIB skip_field is op1215=7 & op911=6 & op68=1 & skip_field { }
 :SIA skip_field is op1215=7 & op911=2 & op68=5 & skip_field { }
