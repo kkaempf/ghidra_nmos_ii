@@ -51,6 +51,13 @@ macro arith_shift_right(value, count) {
   value = value | tmp;
 <continue>
 }
+
+macro rotate_right(value) {
+  local lowbit = value & 1;
+  value = value >> 1;
+  value = value | (lowbit << 15);
+}
+
 #--------------------------------------------------------------------------
 # Mnemonics
 
@@ -103,8 +110,8 @@ shift: count is count { export *[const]:1 count; }
 :SBR shift is op1215=0xf & op911=4 & op68 = 5 & op45 = 0 & shift { B = B >> shift; }
 :SAL shift is op1215=0xf & op911=0 & op68 = 6 & op45 = 0 & shift { A = A << shift; }
 :SBL shift is op1215=0xf & op911=4 & op68 = 6 & op45 = 0 & shift { B = B << shift; }
-:RAR shift is op1215=0xf & op911=0 & op68 = 7 & op45 = 0 & shift { }
-:RBR shift is op1215=0xf & op911=4 & op68 = 7 & op45 = 0 & shift { }
+:RAR shift is op1215=0xf & op911=0 & op68 = 7 & op45 = 0 & shift { rotate_right(A); }
+:RBR shift is op1215=0xf & op911=4 & op68 = 7 & op45 = 0 & shift { rotate_right(B); }
 
 # -- skip
 
