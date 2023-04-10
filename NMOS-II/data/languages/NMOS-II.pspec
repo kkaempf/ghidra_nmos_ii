@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <processor_spec>
-  <programcounter register="PC"/>
+  <programcounter register="P"/>
+  <default_symbols>
+    <symbol name="A" address="0"/>
+    <symbol name="B" address="1"/>
+    <symbol name="P" address="2"/>
+    <symbol name="R" address="3"/>
+    <symbol name="R4" address="4"/>
+    <symbol name="R5" address="5"/>
+    <symbol name="R6" address="6"/>
+    <symbol name="R7" address="7"/>
+    <symbol name="IV" address="8"/>
+    <symbol name="PA" address="9"/>
+    <symbol name="W" address="a"/>
+    <symbol name="DMAPA" address="b"/>
+    <symbol name="DMAMA" address="c"/>
+    <symbol name="DMAC" address="d"/>
+    <symbol name="C" address="e"/>
+    <symbol name="D" address="f"/>
+    <symbol name="AR2" address="10"/>
+    <symbol name="SE" address="11"/>
+    <symbol name="X" address="12"/>
+    <symbol name="Reset" address="20"/>
+  </default_symbols>
+  <default_memory_blocks>
+     <memory_block name="REGISTERS" start_address="0x0000" length="0x020" initialized="false"/>
+  </default_memory_blocks>
 </processor_spec>
