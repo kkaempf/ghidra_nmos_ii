@@ -46,9 +46,9 @@ define token memory_reference(16)
   addr = (0,9) signed  # address
 ;
 
-memref: addr is addr & di=0 & page=0 { export *[const]:2 addr; }
+memref: addr is addr & di=0 & page=0 { export *[ram]:2 addr; }
 memref: addr^",I" is addr & di=1 & page=0  { export *:2 addr; }
-memref: loc is addr & di=0 & page=1 [ loc = inst_start + addr; ] { export *[const]:2 loc; }
+memref: loc is addr & di=0 & page=1 [ loc = inst_start + addr; ] { export *[ram]:2 loc; }
 memref: loc^",I" is addr & di=1 & page=1 [ loc = inst_start + addr; ] { export *:2 loc; }
 
 :LDA memref is op_mem=0 & memref { A = memref; }
@@ -59,12 +59,12 @@ memref: loc^",I" is addr & di=1 & page=1 [ loc = inst_start + addr; ] { export *
 :ADB memref is op_mem=5 & memref { B = B + memref; }
 :STA memref is op_mem=6 & memref { *memref = A; }
 :STB memref is op_mem=7 & memref { *memref = B; }
-:JSM memref is op_mem=8 & memref { }
+:JSM memref is op_mem=8 & memref { R = R + 1; *R:2 = P; call memref; }
 :ISZ memref is op_mem=9 & memref { }
 :AND memref is op_mem=10 & memref { }
 :DSZ memref is op_mem=11 & memref { }
 :IOR memref is op_mem=12 & memref { }
-:JMP memref is op_mem=13 & memref { }
+:JMP memref is op_mem=13 & memref { goto memref; }
 
 # -- shift / rotate
 
