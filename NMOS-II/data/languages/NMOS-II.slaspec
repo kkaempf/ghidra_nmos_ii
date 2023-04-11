@@ -224,12 +224,13 @@ attach variables [ regaddr ] [ A B P R R4 R5 R6 R7 IV PA W  DMAPA DMAMA DMAC C  
 
 # -- 16-bit IOC only
 
-:SDO is opcode=0x7100 { }
-:SDI is opcode=0x7108 { }
-:DBL is opcode=0x7140 { }
-:CBL is opcode=0x7148 { }
-:DBU is opcode=0x7150 { }
-:CBU is opcode=0x7158 { }
+# set DMA direction inwards/outwards
+:SDO is opcode=0x7100 unimpl
+:SDI is opcode=0x7108 unimpl
+:DBL is opcode=0x7140 unimpl
+:CBL is opcode=0x7148 unimpl
+:DBU is opcode=0x7150 unimpl
+:CBU is opcode=0x7158 unimpl
 
 # -- stack
 
