@@ -218,8 +218,9 @@ define token execute(16)
                              # 0 1 2 3 4  5  6  7  8  9  10 11    12    13   14 15 16  17 18 19  20  21  22  23  24  25  26  27  28  29  30  31
 attach variables [ regaddr ] [ A B P R R4 R5 R6 R7 IV PA W  DMAPA DMAMA DMAC C  D  AR2 SE X  R19 R20 R21 R22 R23 R24 R25 R26 R27 R28 R29 R30 R31];
 
-:EXE_D regaddr is exe_d_i=0 & exe_opcode=0x380 & regaddr { }
-:EXE_I regaddr is exe_d_i=1 & exe_opcode=0x380 & regaddr { }
+# execute register content
+:EXE_D regaddr is exe_d_i=0 & exe_opcode=0x380 & regaddr unimpl
+:EXE_I regaddr is exe_d_i=1 & exe_opcode=0x380 & regaddr unimpl
 
 # -- 16-bit IOC only
 
