@@ -156,25 +156,65 @@ rtarget: skip is skip { local tmp:2 = R + skip; export tmp; }
 
 # -- alter
 
-define token alter(16)
+define token alter_op(16)
   op815 = (8,15)
   hold = (7,7)
   clear_set = (6,6)
   alter_skip = (0,5)
 ;
 
-:RLA alter_skip is op815=0x77 & alter_skip { }
-:RLB alter_skip is op815=0x7f & alter_skip { }
-:SLA alter_skip is op815=0x76 & alter_skip { }
-:SLB alter_skip is op815=0x7e & alter_skip { }
-:SAP alter_skip is op815=0xf4 & alter_skip { }
-:SBP alter_skip is op815=0xfc & alter_skip { }
-:SAM alter_skip is op815=0xf5 & alter_skip { }
-:SBM alter_skip is op815=0xfd & alter_skip { }
-:SOC alter_skip is op815=0xf6 & alter_skip { }
-:SOS alter_skip is op815=0xf7 & alter_skip { }
-:SEC alter_skip is op815=0xfe & alter_skip { }
-:SES alter_skip is op815=0xff & alter_skip { }
+# alter target
+atarget: alter_skip is alter_skip { local tmp:2 = (inst_start>>1) + alter_skip; export tmp; }
+
+hcs: "" is hold = 0 & clear_set = 0 { local tmp:1 = 0; export tmp; }
+hcs: "ERR" is hold = 0 & clear_set = 1 { local tmp:1 = 1; export tmp; }
+hcs: ",C" is hold = 1 & clear_set = 0 { local tmp:1 = 2; export tmp; }
+hcs: ",S/" is hold = 1 & clear_set = 1 { local tmp:1 = 3; export tmp; }
+
+macro alter_and_skip_if_set(reg,cs,target) {
+  local bit0:2 = reg & 1;
+  if (cs == 0) goto <check>;
+  if (cs == 1) goto <check>;
+  if (cs == 3) goto <hold_and_set>;
+  # cs == 2 -> clear
+  reg = reg & 0xfffe;
+  goto <check>;
+<hold_and_set>
+  reg = reg | 0x1;
+<check>
+  if (bit0 == 0) goto <continue>;
+  goto [target];
+<continue>
+}
+
+macro alter_and_skip_if_clear(reg,cs,target) {
+  local bit0:2 = reg & 1;
+  if (cs == 0) goto <check>;
+  if (cs == 1) goto <check>;
+  if (cs == 3) goto <hold_and_set>;
+  # cs == 2 -> clear
+  reg = reg & 0xfffe;
+  goto <check>;
+<hold_and_set>
+  reg = reg | 0x1;
+<check>
+  if (bit0 != 0) goto <continue>;
+  goto [target];
+<continue>
+}
+
+:RLA atarget^hcs is op815=0x77 & atarget & hcs { alter_and_skip_if_set(A,hcs,atarget); }
+:RLB atarget^hcs is op815=0x7f & atarget & hcs { alter_and_skip_if_set(B,hcs,atarget); }
+:SLA atarget^hcs is op815=0x76 & atarget & hcs { alter_and_skip_if_clear(A,hcs,atarget); }
+:SLB atarget^hcs is op815=0x7e & atarget & hcs { alter_and_skip_if_clear(B,hcs,atarget); }
+:SAP atarget^hcs is op815=0xf4 & atarget & hcs { }
+:SBP atarget^hcs is op815=0xfc & atarget & hcs { }
+:SAM atarget^hcs is op815=0xf5 & atarget & hcs { }
+:SBM atarget^hcs is op815=0xfd & atarget & hcs { }
+:SOC atarget^hcs is op815=0xf6 & atarget & hcs { }
+:SOS atarget^hcs is op815=0xf7 & atarget & hcs { }
+:SEC atarget^hcs is op815=0xfe & atarget & hcs { }
+:SES atarget^hcs is op815=0xff & atarget & hcs { }
 
 # -- execute
 
