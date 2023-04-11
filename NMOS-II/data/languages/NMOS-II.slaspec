@@ -23,7 +23,7 @@ define register offset=0x40 size=2  [ loc ];
 
 
 # condition flags
-define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F ];
+define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F OV_F ];
 
 #--------------------------------------------------------------------------
 # Macros
@@ -171,50 +171,41 @@ hcs: "ERR" is hold = 0 & clear_set = 1 { local tmp:1 = 1; export tmp; }
 hcs: ",C" is hold = 1 & clear_set = 0 { local tmp:1 = 2; export tmp; }
 hcs: ",S/" is hold = 1 & clear_set = 1 { local tmp:1 = 3; export tmp; }
 
-macro alter_and_skip_if_set(reg,cs,target) {
-  local bit0:2 = reg & 1;
+# skip if (val & mask)^xor != 0
+macro alter_and_skip(val,mask,xor,cs,target) {
+  local bit:2 = (zext(val) & mask) ^ xor;
   if (cs == 0) goto <check>;
   if (cs == 1) goto <check>;
   if (cs == 3) goto <hold_and_set>;
   # cs == 2 -> clear
-  reg = reg & 0xfffe;
+  val = val & ~mask;
   goto <check>;
 <hold_and_set>
-  reg = reg | 0x1;
+  val = val | mask;
 <check>
-  if (bit0 == 0) goto <continue>;
+  if (bit == 0) goto <continue>; # no skip
   goto [target];
 <continue>
 }
 
-macro alter_and_skip_if_clear(reg,cs,target) {
-  local bit0:2 = reg & 1;
-  if (cs == 0) goto <check>;
-  if (cs == 1) goto <check>;
-  if (cs == 3) goto <hold_and_set>;
-  # cs == 2 -> clear
-  reg = reg & 0xfffe;
-  goto <check>;
-<hold_and_set>
-  reg = reg | 0x1;
-<check>
-  if (bit0 != 0) goto <continue>;
-  goto [target];
-<continue>
-}
-
-:RLA atarget^hcs is op815=0x77 & atarget & hcs { alter_and_skip_if_set(A,hcs,atarget); }
-:RLB atarget^hcs is op815=0x7f & atarget & hcs { alter_and_skip_if_set(B,hcs,atarget); }
-:SLA atarget^hcs is op815=0x76 & atarget & hcs { alter_and_skip_if_clear(A,hcs,atarget); }
-:SLB atarget^hcs is op815=0x7e & atarget & hcs { alter_and_skip_if_clear(B,hcs,atarget); }
-:SAP atarget^hcs is op815=0xf4 & atarget & hcs { }
-:SBP atarget^hcs is op815=0xfc & atarget & hcs { }
-:SAM atarget^hcs is op815=0xf5 & atarget & hcs { }
-:SBM atarget^hcs is op815=0xfd & atarget & hcs { }
-:SOC atarget^hcs is op815=0xf6 & atarget & hcs { }
-:SOS atarget^hcs is op815=0xf7 & atarget & hcs { }
-:SEC atarget^hcs is op815=0xfe & atarget & hcs { }
-:SES atarget^hcs is op815=0xff & atarget & hcs { }
+# skip if non-zero
+:RLA atarget^hcs is op815=0x77 & atarget & hcs { alter_and_skip(A,0x0001,0x0000,hcs,atarget); }
+:RLB atarget^hcs is op815=0x7f & atarget & hcs { alter_and_skip(B,0x0001,0x0000,hcs,atarget); }
+# skip if zero
+:SLA atarget^hcs is op815=0x76 & atarget & hcs { alter_and_skip(A,0x0001,0x0001,hcs,atarget); }
+:SLB atarget^hcs is op815=0x7e & atarget & hcs { alter_and_skip(B,0x0001,0x0001,hcs,atarget); }
+# skip if positive
+:SAP atarget^hcs is op815=0xf4 & atarget & hcs { alter_and_skip(A,0x8000,0x8000,hcs,atarget); }
+:SBP atarget^hcs is op815=0xfc & atarget & hcs { alter_and_skip(B,0x8000,0x8000,hcs,atarget); }
+# skip if negative
+:SAM atarget^hcs is op815=0xf5 & atarget & hcs { alter_and_skip(A,0x8000,0x0000,hcs,atarget); }
+:SBM atarget^hcs is op815=0xfd & atarget & hcs { alter_and_skip(B,0x8000,0x0000,hcs,atarget); }
+# skip if overflow
+:SOC atarget^hcs is op815=0xf6 & atarget & hcs { alter_and_skip(OV_F,1,0,hcs,atarget); }
+:SOS atarget^hcs is op815=0xf7 & atarget & hcs { alter_and_skip(OV_F,1,1,hcs,atarget); }
+# skip if extend
+:SEC atarget^hcs is op815=0xfe & atarget & hcs { alter_and_skip(SE,0xf,0,hcs,atarget); }
+:SES atarget^hcs is op815=0xff & atarget & hcs { alter_and_skip(SE,0xf,0xf,hcs,atarget); }
 
 # -- execute
 
