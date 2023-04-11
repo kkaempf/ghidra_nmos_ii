@@ -28,15 +28,15 @@ define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F ];
 #--------------------------------------------------------------------------
 # Macros
 
-macro goto_if_not_zero(value, target) {
+macro goto_if_not_zero(value, starget) {
   if (value == 0) goto <continue>;
-  goto [target];
+  goto [starget];
 <continue>
 }
 
-macro goto_if_zero(value, target) {
+macro goto_if_zero(value, starget) {
   if (value != 0) goto <continue>;
-  goto [target];
+  goto [starget];
 <continue>
 }
 
@@ -119,30 +119,33 @@ shift: count is count { export *[const]:1 count; }
 
 # -- skip
 
-# export as 16-bit to prevent size problems
-target: skip is skip { local tmp:2 = (inst_start>>1) + skip; export tmp; }
+# skip target
+starget: skip is skip { local tmp:2 = (inst_start>>1) + skip; export tmp; }
 
-:RZA target is op1215=7 & op911=2 & op68=0 & target { goto_if_not_zero(A, target); }
-:RZB target is op1215=7 & op911=6 & op68=0 & target { goto_if_not_zero(B, target); }
-:SZA target is op1215=7 & op911=2 & op68=4 & target { goto_if_zero(A, target); }
-:SZB target is op1215=7 & op911=6 & op68=4 & target { goto_if_zero(B, target); }
-:RIA target is op1215=7 & op911=2 & op68=1 & target { local tmp:2 = A; A = A + 1; goto_if_not_zero(tmp, target); }
-:RIB target is op1215=7 & op911=6 & op68=1 & target { local tmp:2 = B; B = B + 1; goto_if_not_zero(tmp, target); }
-:SIA target is op1215=7 & op911=2 & op68=5 & target { local tmp:2 = A; A = A + 1; goto_if_zero(tmp, target); }
-:SIB target is op1215=7 & op911=6 & op68=5 & target { local tmp:2 = B; B = B + 1; goto_if_zero(tmp, target); }
-:SFS target is op1215=7 & op911=2 & op68=2 & target { goto_if_not_zero(FLG_F, target); }
-:SFC target is op1215=7 & op911=2 & op68=6 & target { goto_if_zero(FLG_F, target); }
-:SSS target is op1215=7 & op911=6 & op68=2 & target { goto_if_not_zero(STS_F, target); }
-:SSC target is op1215=7 & op911=6 & op68=6 & target { goto_if_zero(STS_F, target); }
-:SDS target is op1215=7 & op911=2 & op68=3 & target { goto_if_not_zero(DC_F, target); }
-:SDC target is op1215=7 & op911=2 & op68=7 & target { goto_if_zero(DC_F, target); }
-:SHS target is op1215=7 & op911=6 & op68=3 & target { goto_if_not_zero(HLT_F, target); }
-:SHC target is op1215=7 & op911=6 & op68=7 & target { goto_if_zero(HLT_F, target); }
+:RZA starget is op1215=7 & op911=2 & op68=0 & starget { goto_if_not_zero(A, starget); }
+:RZB starget is op1215=7 & op911=6 & op68=0 & starget { goto_if_not_zero(B, starget); }
+:SZA starget is op1215=7 & op911=2 & op68=4 & starget { goto_if_zero(A, starget); }
+:SZB starget is op1215=7 & op911=6 & op68=4 & starget { goto_if_zero(B, starget); }
+:RIA starget is op1215=7 & op911=2 & op68=1 & starget { local tmp:2 = A; A = A + 1; goto_if_not_zero(tmp, starget); }
+:RIB starget is op1215=7 & op911=6 & op68=1 & starget { local tmp:2 = B; B = B + 1; goto_if_not_zero(tmp, starget); }
+:SIA starget is op1215=7 & op911=2 & op68=5 & starget { local tmp:2 = A; A = A + 1; goto_if_zero(tmp, starget); }
+:SIB starget is op1215=7 & op911=6 & op68=5 & starget { local tmp:2 = B; B = B + 1; goto_if_zero(tmp, starget); }
+:SFS starget is op1215=7 & op911=2 & op68=2 & starget { goto_if_not_zero(FLG_F, starget); }
+:SFC starget is op1215=7 & op911=2 & op68=6 & starget { goto_if_zero(FLG_F, starget); }
+:SSS starget is op1215=7 & op911=6 & op68=2 & starget { goto_if_not_zero(STS_F, starget); }
+:SSC starget is op1215=7 & op911=6 & op68=6 & starget { goto_if_zero(STS_F, starget); }
+:SDS starget is op1215=7 & op911=2 & op68=3 & starget { goto_if_not_zero(DC_F, starget); }
+:SDC starget is op1215=7 & op911=2 & op68=7 & starget { goto_if_zero(DC_F, starget); }
+:SHS starget is op1215=7 & op911=6 & op68=3 & starget { goto_if_not_zero(HLT_F, starget); }
+:SHC starget is op1215=7 & op911=6 & op68=7 & starget { goto_if_zero(HLT_F, starget); }
 
 # -- return
 
-:RET target is op1215=0xf & op911=0 & op68=2 & target { }
-:RET "pop,"^target is op1215=0xf & op911=0 & op68=3 & target { }
+# return target
+rtarget: skip is skip { local tmp:2 = R + skip; export tmp; }
+
+:RET rtarget is op1215=0xf & op911=0 & op68=2 & rtarget { R = R - 1; goto [rtarget]; }
+:RET rtarget^",P" is op1215=0xf & op911=0 & op68=3 & rtarget { R = R - 1; goto [rtarget]; }
 
 # -- complement
 
