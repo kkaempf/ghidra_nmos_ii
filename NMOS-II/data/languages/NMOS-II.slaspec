@@ -222,7 +222,9 @@ attach variables [ regaddr ] [ A B P R R4 R5 R6 R7 IV PA W  DMAPA DMAMA DMAC C  
 :EXE_D regaddr is exe_d_i=0 & exe_opcode=0x380 & regaddr unimpl
 :EXE_I regaddr is exe_d_i=1 & exe_opcode=0x380 & regaddr unimpl
 
-# -- 16-bit IOC only
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+# IOC only
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 # set DMA direction inwards/outwards
 :SDO is opcode=0x7100 unimpl
@@ -269,6 +271,10 @@ define token stack(16)
 :PCM is opcode=0x7128 unimpl
 :DDR is opcode=0x7138 unimpl
 
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+# EMC only
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 # -- four word operation
 
 define token four_word(16)
@@ -308,19 +314,19 @@ fwc: fw_words is fw_words { export *[const]:1 fw_words; }
 
 # -- mantissa shift
 
-:MRX is opcode=0x7b00 { }
-:DRS is opcode=0x7b21 { }
-:MLY is opcode=0x7b61 { }
-:MRY is opcode=0x7b40 { }
-:NRM is opcode=0x7340 { }
+:MRX is opcode=0x7b00 unimpl
+:DRS is opcode=0x7b21 unimpl
+:MLY is opcode=0x7b61 unimpl
+:MRY is opcode=0x7b40 unimpl
+:NRM is opcode=0x7340 unimpl
 
 # -- arithmetic
 
-:FXA is opcode=0x7280 { }
-:MWA is opcode=0x7200 { }
-:CMX is opcode=0x72c0 { }
-:CMY is opcode=0x7240 { }
-:FMP is opcode=0x7a00 { }
-:FDV is opcode=0x7a21 { }
-:MPY is opcode=0x7b8f { }
-:CDC is opcode=0x73c0 { }
+:FXA is opcode=0x7280 unimpl
+:MWA is opcode=0x7200 unimpl
+:CMX is opcode=0x72c0 unimpl
+:CMY is opcode=0x7240 unimpl
+:FMP is opcode=0x7a00 unimpl
+:FDV is opcode=0x7a21 unimpl
+:MPY is opcode=0x7b8f unimpl
+:CDC is opcode=0x73c0 unimpl
