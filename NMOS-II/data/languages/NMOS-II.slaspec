@@ -19,8 +19,11 @@ define space register type=register_space size=2;
                                    #0 2 4 6 8  a  c  e  10 12 14 16    18    1a   1c 1e 20  22 24
 define register offset=0x0 size=2 [ A B P R R4 R5 R6 R7 IV PA W  DMAPA DMAMA DMAC C  D  AR2 SE X R19 R20 R21 R22 R23 R24 R25 R26 R27 R28 R29 R30 R31];
 
+# helper locations
 define register offset=0x40 size=2  [ loc ];
 
+# helper bit shift/rotate
+define register offset=0x42 size=1  [ bits ];
 
 # condition flags
 define register offset=0x50 size=1   [ DC_F HLT_F FLG_F STS_F OV_F ];
@@ -76,11 +79,11 @@ define token memory_reference(16)
 ;
 
 # base page, direct
-memref: addr     is addr & page=0 & di=0                              { export *[ram]:2 addr; }
+memref: loc      is addr & page=0 & di=0 [ loc = 0 + addr; ]          { ptr:2 = loc;    export *[ram]:2 ptr; }
 # base page, indirect
 memref: loc^",I" is addr & page=0 & di=1 [ loc = 0 + addr; ]          { ptr:2 = *loc:2; export *[ram]:2 ptr; }
 # current page, direct
-memref: loc      is addr & page=1 & di=0 [ loc = inst_start + addr; ] { export *[ram]:2 loc; }
+memref: loc      is addr & page=1 & di=0 [ loc = inst_start + addr; ] { ptr:2 = loc;    export *[ram]:2 ptr; }
 # current page, indirect
 memref: loc^",I" is addr & page=1 & di=1 [ loc = inst_start + addr; ] { ptr:2 = *loc:2; export *[ram]:2 ptr; }
 
@@ -110,10 +113,13 @@ define token shift_rotate(16)
   skip = (0,5) signed
 ;
 
-shift: count is count { export *[const]:1 count; }
+shift: bits is count [ bits = count + 1; ] { export *[const]:1 bits; }
 
 :AAR shift is op1215=0xf & op911=0 & op68 = 4 & op45 = 0 & shift { arith_shift_right(A, shift); }
 :ABR shift is op1215=0xf & op911=4 & op68 = 4 & op45 = 0 & shift { arith_shift_right(B, shift); }
+# pseudo-op 'clear': shift right by 16
+:CLA is op1215=0xf & op911=0 & op68 = 5 & op45 = 0 & count=0xf { A = 0; }
+:CLB is op1215=0xf & op911=4 & op68 = 5 & op45 = 0 & count=0xf { B = 0; }
 :SAR shift is op1215=0xf & op911=0 & op68 = 5 & op45 = 0 & shift { A = A >> shift; }
 :SBR shift is op1215=0xf & op911=4 & op68 = 5 & op45 = 0 & shift { B = B >> shift; }
 :SAL shift is op1215=0xf & op911=0 & op68 = 6 & op45 = 0 & shift { A = A << shift; }
