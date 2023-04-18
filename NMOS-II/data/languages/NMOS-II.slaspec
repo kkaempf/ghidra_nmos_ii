@@ -130,7 +130,7 @@ shift: bits is count [ bits = count + 1; ] { export *[const]:1 bits; }
 # -- skip
 
 # skip target
-starget: skip is skip { local tmp:2 = (inst_start>>1) + skip; export tmp; }
+starget: loc is skip [ loc = inst_start + skip; ] { ptr:2 = loc; export ptr; }
 
 :RZA starget is op1215=7 & op911=2 & op68=0 & starget { goto_if_not_zero(A, starget); }
 :RZB starget is op1215=7 & op911=6 & op68=0 & starget { goto_if_not_zero(B, starget); }
