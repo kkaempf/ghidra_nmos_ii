@@ -293,7 +293,7 @@ define token stack(16)
   local cnt = shift;
   local ptr = A;
 <clear_next>
-  *[ram]:2 ptr = 0;
+  *ptr = 0:2;
   if (cnt == 0) goto <clear_exit>;
   ptr = ptr + 1;
   cnt = cnt - 1;
@@ -306,7 +306,7 @@ define token stack(16)
   local tptr = B; # to pointer
   local cnt = shift;
 <copy_next>
-  *[ram]:2 tptr = *[ram]:2 fptr;
+  *:2 tptr = *fptr;
   if (cnt == 0) goto <copy_exit>;
   fptr = fptr + 1;
   tptr = tptr + 1;
