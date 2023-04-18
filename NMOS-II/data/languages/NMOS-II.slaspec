@@ -105,6 +105,7 @@ memref: loc^",I" is addr & page=1 & di=1 [ loc = inst_start + addr; ] { ptr:2 = 
 # -- shift / rotate
 
 define token shift_rotate(16)
+  op415 = (4,15) # used for "four words"
   op1215 = (12,15)  # opcode1
   op911 = (9,11)
   op68 = (6,8)
@@ -287,17 +288,9 @@ define token stack(16)
 
 # -- four word operation
 
-define token four_word(16)
-  fw_opcode = (4,15)
-  fw_words = (0,3)
-;
-
-# four words count
-fwc: fw_words is fw_words { export *[const]:1 fw_words; }
-
 # clear N+1 words at A
-:CLR fwc is fw_opcode=0x738 & fwc {
-  local cnt = fwc;
+:CLR shift is op415=0x738 & shift {
+  local cnt = shift;
   local ptr = A;
 <clear_next>
   *[ram]:2 ptr = 0;
@@ -308,10 +301,10 @@ fwc: fw_words is fw_words { export *[const]:1 fw_words; }
 <clear_exit>
 }
 # copy N+1 words from A to B
-:XFR fwc is fw_opcode=0x730 & fwc {
+:XFR shift is op415=0x730 & shift {
   local fptr = A; # from pointer
   local tptr = B; # to pointer
-  local cnt = fwc;
+  local cnt = shift;
 <copy_next>
   *[ram]:2 tptr = *[ram]:2 fptr;
   if (cnt == 0) goto <copy_exit>;
