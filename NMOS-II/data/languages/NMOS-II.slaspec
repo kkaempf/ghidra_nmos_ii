@@ -45,7 +45,7 @@ macro goto_if_zero(value, starget) {
 
 macro compare_and_goto_if_not_equal(register, memory) {
   if (register == memory) goto <continue>;
-  local tmp:2 = inst_next + 1;
+  local tmp:2 = inst_start + 2;
   goto [tmp];
 <continue>
 }
