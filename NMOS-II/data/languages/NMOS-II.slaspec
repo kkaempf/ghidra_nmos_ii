@@ -75,10 +75,14 @@ define token memory_reference(16)
   addr = (0,9) signed  # address
 ;
 
-memref: addr is addr & di=0 & page=0 { export *[ram]:2 addr; }
-memref: addr^",I" is addr & di=1 & page=0  { export *:2 addr; }
-memref: loc is addr & di=0 & page=1 [ loc = (inst_start>>1) + addr; ] { export *[ram]:2 loc; }
-memref: loc^",I" is addr & di=1 & page=1 [ loc = (inst_start>>1) + addr; ] { export *:2 loc; }
+# base page, direct
+memref: addr     is addr & page=0 & di=0                              { export *[ram]:2 addr; }
+# base page, indirect
+memref: loc^",I" is addr & page=0 & di=1 [ loc = 0 + addr; ]          { ptr:2 = *loc:2; export *[ram]:2 ptr; }
+# current page, direct
+memref: loc      is addr & page=1 & di=0 [ loc = inst_start + addr; ] { export *[ram]:2 loc; }
+# current page, indirect
+memref: loc^",I" is addr & page=1 & di=1 [ loc = inst_start + addr; ] { ptr:2 = *loc:2; export *[ram]:2 ptr; }
 
 :LDA memref is op_mem=0 & memref { A = memref; }
 :LDB memref is op_mem=1 & memref { B = memref; }
