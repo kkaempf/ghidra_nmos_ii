@@ -83,9 +83,9 @@ memref: loc      is addr & page=0 & di=0 [ loc = 0 + addr; ]          { ptr:2 = 
 memref: loc^",I" is addr & page=0 & di=1 [ loc = 0 + addr; ]          { ptr:2 = *loc:2; export *[ram]:2 ptr; }
 
 # current page, direct, JMP
-memref: loc^" DC" is addr & page=1 & di=0 & op_mem=13 [ loc = (inst_start & 0xfc00); loc = loc + addr; ] { ptr:2 = loc; ptr = ptr + addr;   export *[ram]:2 ptr; }
+memref: loc^" DC" is addr & page=1 & di=0 & op_mem=13 [ loc = (inst_start & 0xfc00) + addr; ] { ptr:2 = loc; ptr = ptr + addr;   export *[ram]:2 ptr; }
 # current page, indirect, JMP
-memref: loc^" IC" is addr & page=1 & di=1 & op_mem=13 [ loc = (inst_start & 0xfc00); loc = loc + addr; ] { ptr:2 = loc; ptr = ptr + addr; ptr = *ptr; export *[ram]:2 ptr; }
+memref: loc^" IC" is addr & page=1 & di=1 & op_mem=13 [ loc = (inst_start & 0xfc00) + addr; ] { ptr:2 = loc; ptr = ptr + addr; ptr = *ptr; export *[ram]:2 ptr; }
 
 # current page, direct
 memref: loc^" DC" is addr & page=1 & di=0 [ loc = (inst_start & 0xfc00) + addr; ] { ptr:2 = loc;    export *[ram]:2 ptr; }
