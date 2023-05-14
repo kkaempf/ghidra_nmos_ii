@@ -1,0 +1,15 @@
+##VERSION: 2.0
+LICENSE||LICENSE||||END|
+data||LICENSE||||END|
+data/manuals||LICENSE||||END|
+data/manuals/NMOS-II.idx||LICENSE||||END|
+data/languages||LICENSE||||END|
+data/languages/NMOS-II.ldefs||LICENSE||||END|
+data/languages/NMOS-II.pspec||LICENSE||||END|
+data/languages/NMOS-II.sla||LICENSE||||END|
+data/languages/NMOS-II.cspec||LICENSE||||END|
+data/languages/NMOS-II.slaspec~||LICENSE||||END|
+data/languages/NMOS-II.slaspec||LICENSE||||END|
+Module.manifest||LICENSE||||END|
+certification.manifest||LICENSE||||END|
+README.md||LICENSE||||END|

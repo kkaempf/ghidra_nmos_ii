@@ -1,7 +1,0 @@
-##VERSION: 2.0
-Module.manifest||GHIDRA||||END|
-data/languages/NMOS-II.cspec||GHIDRA||||END|
-data/languages/NMOS-II.ldefs||GHIDRA||||END|
-data/languages/NMOS-II.pspec||GHIDRA||||END|
-data/languages/NMOS-II.slaspec||GHIDRA||||END|
-data/manuals/NMOS-II.idx||GHIDRA||||END|
