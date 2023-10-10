@@ -82,13 +82,21 @@ memref: loc      is addr & page=0 & di=0 [ loc = 0 + addr; ]          { ptr:2 = 
 # base page, indirect
 memref: loc^",I" is addr & page=0 & di=1 [ loc = 0 + addr; ]          { ptr:2 = *loc:2; export *[ram]:2 ptr; }
 
+# About direct page addressing:
+#  However, the least 10 bits produces by the assembler and placed in the
+#  machine-instruction do not correspond exactly to the "real" memory address
+#  that is referenced. Bit 9 (the 10th bit) is complemented before it is placed
+#  in the address field of the instruction. The other 9 bits are left unchanged.
+#  This induces a one-half page offset whose effect is to make current page
+#  addressing relative to the middle of the page.
+
 # current page, direct, JMP
-memref: loc^" DC" is addr & page=1 & di=0 & op_mem=13 [ loc = (inst_start & 0xfc00) + addr; ] { ptr:2 = loc; ptr = ptr + addr;   export *[ram]:2 ptr; }
+memref: loc^" DC" is addr & page=1 & di=0 & op_mem=13 [ loc = (inst_start & 0xfc00) + (addr & 0x1ff) + ((~(addr>>9) & 0x1) * 0x200); ] { ptr:2 = loc; export *[ram]:2 ptr; }
 # current page, indirect, JMP
 memref: loc^" IC" is addr & page=1 & di=1 & op_mem=13 [ loc = (inst_start & 0xfc00) + addr; ] { ptr:2 = loc; ptr = ptr + addr; ptr = *ptr; export *[ram]:2 ptr; }
 
 # current page, direct
-memref: loc^" DC" is addr & page=1 & di=0 [ loc = (inst_start & 0xfc00) + addr; ] { ptr:2 = loc;    export *[ram]:2 ptr; }
+memref: loc^" DC" is addr & page=1 & di=0 [ loc = (inst_start & 0xfc00) + (addr & 0x1ff) + ((~(addr>>9) & 0x1) * 0x200); ] { ptr:2 = loc; export *[ram]:2 ptr; }
 # current page, indirect
 memref: loc^" IC" is addr & page=1 & di=1 [ loc = (inst_start & 0xfc00) + addr; ] { ptr:2 = *loc:2; export *[ram]:2 ptr; }
 
