@@ -87,7 +87,8 @@ attach variables [ regaddr ] [ A B P R R4 R5 R6 R7 IV PA W  DMAPA DMAMA DMAC C  
 memref: regaddr is raddr=0 & regaddr & page=0 & di=0               { ptr:2 = regaddr; export *[ram]:2 ptr; }
 memref: loc is raddr!=0 & addr & page=0 & di=0 [ loc = 0 + addr; ] { ptr:2 = loc;     export *[ram]:2 ptr; }
 # base page, indirect
-memref: loc^",I" is addr & page=0 & di=1 [ loc = 0 + addr; ]       { ptr:2 = *loc:2;  export *[ram]:2 ptr; }
+memref: regaddr^",I" is raddr=0 & regaddr & page=0 & di=1               { ptr:2 = *regaddr:2;  export *[ram]:2 ptr; }
+memref: loc^",I" is raddr!=0 & addr & page=0 & di=1 [ loc = 0 + addr; ] { ptr:2 = *loc:2;  export *[ram]:2 ptr; }
 
 # About direct page addressing:
 #  However, the least 10 bits produces by the assembler and placed in the
