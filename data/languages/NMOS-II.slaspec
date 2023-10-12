@@ -197,7 +197,7 @@ define token alter_op(16)
 ;
 
 # alter target
-atarget: loc is alter_skip [ loc = inst_start + alter_skip; ] { ptr:2 = loc; export *[ram]:2 ptr; }
+atarget: loc is alter_skip [ loc = inst_start + alter_skip; ] { ptr:2 = loc; export ptr; }
 
 hcs: "" is hold = 0 & clear_set = 0 { local tmp:1 = 0; export tmp; }
 hcs: "ERR" is hold = 0 & clear_set = 1 { local tmp:1 = 1; export tmp; }
