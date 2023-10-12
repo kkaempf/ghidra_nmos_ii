@@ -103,6 +103,9 @@ memref: loc^" DC" is addr & page=1 & di=0 [ loc = (inst_start & 0xfc00) + (addr 
 # current page, indirect
 memref: loc^" IC" is addr & page=1 & di=1 [ loc = (inst_start & 0xfc00) + (addr & 0x1ff) + (0x200 - (addr & 0x200)); ] { ptr:2 = *loc:2; export ptr; }
 
+# LDA A == NOP
+:NOP is opcode=0 unimpl
+
 :LDA memref is op_mem=0 & memref { A = memref; }
 :LDB memref is op_mem=1 & memref { B = memref; }
 :CPA memref is op_mem=2 & memref { compare_and_goto_if_not_equal(A, memref, (inst_start>>1) + 2:2); }
