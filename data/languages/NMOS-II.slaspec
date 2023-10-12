@@ -84,11 +84,11 @@ define token memory_reference(16)
 attach variables [ regaddr ] [ A B P R R4 R5 R6 R7 IV PA W  DMAPA DMAMA DMAC C  D  AR2 SE X  R19 R20 R21 R22 R23 R24 R25 R26 R27 R28 R29 R30 R31];
 
 # base page, direct
-memref: regaddr is raddr=0 & regaddr & page=0 & di=0               { ptr:2 = regaddr; export *[ram]:2 ptr; }
-memref: loc is raddr!=0 & addr & page=0 & di=0 [ loc = 0 + addr; ] { ptr:2 = loc;     export *[ram]:2 ptr; }
+memref: regaddr is raddr=0 & regaddr & page=0 & di=0               { ptr:2 = regaddr; export ptr; }
+memref: loc is raddr!=0 & addr & page=0 & di=0 [ loc = 0 + addr; ] { ptr:2 = loc;     export ptr; }
 # base page, indirect
-memref: regaddr^",I" is raddr=0 & regaddr & page=0 & di=1               { ptr:2 = *regaddr:2;  export *[ram]:2 ptr; }
-memref: loc^",I" is raddr!=0 & addr & page=0 & di=1 [ loc = 0 + addr; ] { ptr:2 = *loc:2;  export *[ram]:2 ptr; }
+memref: regaddr^",I" is raddr=0 & regaddr & page=0 & di=1               { ptr:2 = *regaddr:2;  export ptr; }
+memref: loc^",I" is raddr!=0 & addr & page=0 & di=1 [ loc = 0 + addr; ] { ptr:2 = *loc:2;      export ptr; }
 
 # About direct page addressing:
 #  However, the least 10 bits produces by the assembler and placed in the
@@ -99,9 +99,9 @@ memref: loc^",I" is raddr!=0 & addr & page=0 & di=1 [ loc = 0 + addr; ] { ptr:2 
 #  addressing relative to the middle of the page.
 
 # current page, direct
-memref: loc^" DC" is addr & page=1 & di=0 [ loc = (inst_start & 0xfc00) + (addr & 0x1ff) + (0x200 - (addr & 0x200)); ] { ptr:2 = loc; export *[ram]:2 ptr; }
+memref: loc^" DC" is addr & page=1 & di=0 [ loc = (inst_start & 0xfc00) + (addr & 0x1ff) + (0x200 - (addr & 0x200)); ] { ptr:2 = loc; export ptr; }
 # current page, indirect
-memref: loc^" IC" is addr & page=1 & di=1 [ loc = (inst_start & 0xfc00) + (addr & 0x1ff) + (0x200 - (addr & 0x200)); ] { ptr:2 = *loc:2; export *[ram]:2 ptr; }
+memref: loc^" IC" is addr & page=1 & di=1 [ loc = (inst_start & 0xfc00) + (addr & 0x1ff) + (0x200 - (addr & 0x200)); ] { ptr:2 = *loc:2; export ptr; }
 
 :LDA memref is op_mem=0 & memref { A = memref; }
 :LDB memref is op_mem=1 & memref { B = memref; }
