@@ -108,16 +108,16 @@ memref: loc^",I" is addr & page=1 & di=1 [ loc = (inst_start & 0xfc00) + (addr &
 
 :LDA memref is op_mem=0 & memref { A = memref; }
 :LDB memref is op_mem=1 & memref { B = memref; }
-:CPA memref is op_mem=2 & memref { compare_and_goto_if_not_equal(A, memref, (inst_start>>1) + 2:2); }
-:CPB memref is op_mem=3 & memref { compare_and_goto_if_not_equal(B, memref, (inst_start>>1) + 2:2); }
+:CPA memref is op_mem=2 & memref { local l:2 = inst_start + 2:2; compare_and_goto_if_not_equal(A, memref, l); }
+:CPB memref is op_mem=3 & memref { local l:2 = inst_start + 2:2; compare_and_goto_if_not_equal(B, memref, l); }
 :ADA memref is op_mem=4 & memref { A = A + memref; }
 :ADB memref is op_mem=5 & memref { B = B + memref; }
 :STA memref is op_mem=6 & memref { *memref = A; }
 :STB memref is op_mem=7 & memref { *memref = B; }
 :JSM memref is op_mem=8 & memref { R = R + 1; *R:2 = P; call [memref]; }
-:ISZ memref is op_mem=9 & memref { local tmp:2 = memref + 1; *memref:2 = tmp; goto_if_zero(tmp, (inst_start>>1) + 2:2); }
+:ISZ memref is op_mem=9 & memref { local l:2 = inst_start + 2:2; local tmp:2 = memref + 1; *memref:2 = tmp; goto_if_zero(tmp, l); }
 :AND memref is op_mem=10 & memref { A = A & memref; }
-:DSZ memref is op_mem=11 & memref { local tmp:2 = memref - 1; *memref:2 = tmp; goto_if_zero(tmp, (inst_start>>1) + 2:2); }
+:DSZ memref is op_mem=11 & memref { local l:2 = inst_start + 2:2; local tmp:2 = memref - 1; *memref:2 = tmp; goto_if_zero(tmp, l); }
 :IOR memref is op_mem=12 & memref { A = A | memref; }
 :JMP memref is op_mem=13 & memref { goto [memref]; }
 
