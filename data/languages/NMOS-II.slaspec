@@ -43,12 +43,6 @@ macro goto_if_zero(value, starget) {
 <continue>
 }
 
-macro compare_and_goto_if_not_equal(register, value, starget) {
-  if (register == value) goto <continue>;
-  goto [starget];
-<continue>
-}
-
 macro arith_shift_right(value, count) {
   local high = value & 0x8000;
   value = value >> count;
@@ -108,16 +102,16 @@ memref: loc^",I" is addr & page=1 & di=1 [ loc = (inst_start & 0xfc00) + (addr &
 
 :LDA memref is op_mem=0 & memref { A = memref; }
 :LDB memref is op_mem=1 & memref { B = memref; }
-:CPA memref is op_mem=2 & memref { local l:2 = inst_start + 2:2; compare_and_goto_if_not_equal(A, memref, l); }
-:CPB memref is op_mem=3 & memref { local l:2 = inst_start + 2:2; compare_and_goto_if_not_equal(B, memref, l); }
+:CPA memref is op_mem=2 & memref { if (A != memref) goto inst_next2; }
+:CPB memref is op_mem=3 & memref { if (B != memref) goto inst_next2; }
 :ADA memref is op_mem=4 & memref { A = A + memref; }
 :ADB memref is op_mem=5 & memref { B = B + memref; }
 :STA memref is op_mem=6 & memref { *memref = A; }
 :STB memref is op_mem=7 & memref { *memref = B; }
 :JSM memref is op_mem=8 & memref { R = R + 1; *R:2 = P; call [memref]; }
-:ISZ memref is op_mem=9 & memref { local l:2 = inst_start + 2:2; local tmp:2 = memref + 1; *memref:2 = tmp; goto_if_zero(tmp, l); }
+:ISZ memref is op_mem=9 & memref { local tmp:2 = memref + 1; *memref:2 = tmp; if (tmp == 0) goto inst_next2; }
 :AND memref is op_mem=10 & memref { A = A & memref; }
-:DSZ memref is op_mem=11 & memref { local l:2 = inst_start + 2:2; local tmp:2 = memref - 1; *memref:2 = tmp; goto_if_zero(tmp, l); }
+:DSZ memref is op_mem=11 & memref { local tmp:2 = memref - 1; *memref:2 = tmp; if (tmp == 0) goto inst_next2; }
 :IOR memref is op_mem=12 & memref { A = A | memref; }
 :JMP memref is op_mem=13 & memref { goto [memref]; }
 
